@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Magazine</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+}
+
+.page-container {
+    width: 75vw;
+    height: 100vh;
+    max-width: calc(100vh * 3/4);
+    max-height: calc(75vw * 4/3);
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    position: relative;
+}
+
+.navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.5rem 0;
+}
+
+button {
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin: 0 0.5rem;
+}
+
+button:hover {
+    background-color: #ddd;
+}
+
+button:active {
+    background-color: #bbb;
+}
+
+button:focus {
+    outline: none;
+}
+
+.page-image {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    
+}
+
+.navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-left,
+.button-right,
+.button-page-number {
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
+    color: transparent; /* Hide the text, but keep it accessible to screen readers */
+}
+
+.button-left::before,
+.button-right::before,
+.button-page-number::before {
+    content: attr(aria-label);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    clip: rect(1px, 1px, 1px, 1px);
+    overflow: hidden;
+}
+
+.button-left {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAaAgMAAACWZ9fKAAAADFBMVEUAAADAwMD6/f8AAADhPUQAAAAAAXRSTlMAQObYZgAAACBJREFUGNNjQAdaq5DBAgbVUGQQM8qnMp//PzL4gx4dAMOwgXcQr7dJAAAAAElFTkSuQmCC');
+    width: 240px;
+    height: 104px;
+    aria-label: "Left";
+}
+
+.button-right {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAaAgMAAACWZ9fKAAAADFBMVEUAAADAwMD6/f8AAADhPUQAAAAAAXRSTlMAQObYZgAAACBJREFUGNNjQAdaq5DBAgbVUGQQM8qnMp//PzL4gx4dAMOwgXcQr7dJAAAAAElFTkSuQmCC');
+    width: 240px;
+    height: 104px;
+    aria-label: "Right";
+}
+
+.button-page-number {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAaAgMAAAABNnAQAAAADFBMVEUAAADAwMD6/f8AAADhPUQAAAAAAXRSTlMAQObYZgAAACRJREFUKM9jIAC0VuEBCxhUQ/GAmFHpUenBIs3/Hw/4QyAXAADyYwf/UD8tKAAAAABJRU5ErkJggg==');
+    width: 480px;
+    height: 104px;
+    color: #000; /* Set the text color */
+    font-size: 16px; /* Adjust the font size */
+    aria-label: "Page Number";
+}
+
+.button-left,
+.button-right,
+.button-page-number {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    border: none;
+    color: transparent; /* Hide the text, but keep it accessible to screen readers */
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    display: inline-block;
+    vertical-align: top;
+}
+
+
+
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Page content will be loaded here -->
+    </div>
+    <div class="navigation">
+        <button id="page-number" data-current-page="1" class="button-page-number">1 of 20</button>
+        <div class="button-group">
+            <button id="prev-page" class="button-left">Left</button>
+            <button id="next-page" class="button-right">Right</button>
+        </div>
+    </div>    
+    <script>
+        const pages = [
+            '<canvas id="page-image-canvas"></canvas>',
+            '<p>This is an article</p>',
+            '<img src="image.jpg" alt="An image" />',
+            '<div>Another content type here</div>'
+        ];
+        
+        const pageCount = pages.length;
+        const pageNumber = document.getElementById('page-number');
+        const pageContainer = document.querySelector('.page-container');
+        
+        function loadPage(index) {
+            pageContainer.innerHTML = pages[index - 1];
+            pageNumber.textContent = `${index} of ${pageCount}`;
+            pageNumber.dataset.currentPage = index;
+        
+            if (index === 1) {
+                drawImageNearestNeighbor('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAABQBAMAAAC35AtgAAAAJFBMVEUWFxojSXX6/f9ortS//zyUIWr/gKT/0QAQ0nXWJBFDAGf/JnSksdpnAAADO0lEQVRIx4TRsU4DMQwGYBsV1DEWGRjRLbAiXoBDFgobC8y8RddelcEjAwsrI0/Jn+QuTW5o/8pS2k+20zsaTuYs707kPEufh8djErOMXkTYkcy5bplUdVyPaNlMe8WAhifRCRN8KRFVeMOsMZj6XHFMJdLuDjGILuWDGKO92e0zeVRe9JTW1+GudKpa5htTB36QwntaePKJBQV/XHjZq7hWuhhYUurVJlTa7bFAcG54G6LJ1kzwmcwmucGZK9OWsGqdygizc8IsKbzijSLj3O91nF+QI86sMWpQKdGUMoMLBzM1nebmENVwxjCiYzeYwVB4cHk41W5wnR0UX6Bd995BPdAsWGCuvMkteyl8+B2efw2bl+FbS5GF/4bnv/umO8W5wthrphaZqGEmyb6J+WpxpJ5BmfVbQ7oouZbd7F5/vhV5XXWX1W6jrz85PVN9IcW/XM/MxbXkqe9GOuY1O5b6z/SF1sxlvQvQO/rsuFl/EexwS1c91wcLPgy3dPnR8G6XjsUHHfDL5fv7W+X/UutYx2koiALoJGgcKVtRLDXVNjRIK/gF2omieRQ0b4u5BdVqhWTXNPFn7Ffwfdx5jpUYBxpGykTJyfXEfrbsYXhO5sHZ3H/YMUwuMXO/O51kd+JHxdPethsIUMXOPPTjj75P7vB9L9tAB4j4mXfjwGVKRtS77cPEqhOz8wRoHCVet6DWyvEzy8CLtzG/fygArKpfeDeMY3JFGLnC4po5fvwy8SuSpco1yzCeuLsOreDsWHLGfz6LGvY2sy555EIYtAtU9+Sy4Be15F+OWkKCabuwvLxv3CHZpSw531wNJcjuueDXrDKxu0PJWKbzt+4zG1n0Hxxm7JdbjYsouUSySFXTw9sL3zu5pasqWcQm7qc6c4lKbRfo1z75capPJir4dlAGGeXrzePMWYznxp/IrbQsmPEO7xCN1UT1mhknH4AWzb5kxjt0KI2DumBWAOrFko3dF8z6jM7DqZrtuOa7EpZcc/Sf/BGkjBe9zQqAbNZ4PRsRbpKjfc2lCxR3sduMDVDgZtTjDVYgwqL98TUXIbtH2/aaQQZKpd7ikGC8rcfxb+moJspw8v89cf0GSiXFRc0QuZIAAAAASUVORK5CYII=');
+            }
+        }
+        
+        document.getElementById('prev-page').addEventListener('click', () => {
+            const currentPage = parseInt(pageNumber.dataset.currentPage, 10);
+            if (currentPage > 1) {
+                loadPage(currentPage - 1);
+            }
+        });
+        
+        document.getElementById('next-page').addEventListener('click', () => {
+            const currentPage = parseInt(pageNumber.dataset.currentPage, 10);
+            if (currentPage < pageCount) {
+                loadPage(currentPage + 1);
+            }
+        });
+        
+        function drawImageNearestNeighbor(base64Image) {
+    const canvas = document.getElementById('page-image-canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.src = base64Image;
+    img.onload = () => {
+        canvas.width = Math.min(window.innerWidth * 0.75, window.innerHeight * 3 / 4);
+        canvas.height = Math.min(window.innerWidth * 1, window.innerHeight * 4 / 3);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+}
+
+        
+        // Load the first page
+        loadPage(1);
+        </script>
+        
+</body>
+</html>
